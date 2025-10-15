@@ -1,0 +1,404 @@
+﻿<!-- File: Views/ScheduleView.xaml -->
+<UserControl x:Class="WasteManagementApp.Views.ScheduleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:utilities="clr-namespace:WasteManagementApp.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="White">
+
+    <UserControl.Resources>
+        <!-- Value Converters -->
+        <utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <utilities:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+
+        <!-- Styles -->
+        <Style x:Key="PanelStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DDDDDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="SubHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#555555"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#45a049"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#CCCCCC"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="#2196F3"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0b7dda"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BinCardStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Text="Bin Collection Schedule" 
+                           FontSize="24" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,20"/>
+
+                <!-- Address Input Panel -->
+                <Border Style="{StaticResource PanelStyle}">
+                    <StackPanel>
+                        <TextBlock Text="🏠 Your Address" Style="{StaticResource HeaderStyle}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Text="Enter your address:" 
+                                       Margin="0,0,0,5"/>
+
+                            <TextBox Grid.Row="1" Grid.Column="0"
+                                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="36"
+                                     Padding="10"
+                                     VerticalContentAlignment="Center"
+                                     Margin="0,0,10,0"
+                                     FontSize="13"/>
+
+                            <Button Grid.Row="1" Grid.Column="1"
+                                    Content="Lookup Schedule"
+                                    Command="{Binding LookupScheduleCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Width="140"
+                                    Margin="0,0,10,0"/>
+
+                            <Button Grid.Row="1" Grid.Column="2"
+                                    Content="Clear"
+                                    Command="{Binding ClearAddressCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Width="80"/>
+                        </Grid>
+
+                        <!-- OR Suburb Selection -->
+                        <TextBlock Text="Or select suburb:" 
+                                   Margin="0,15,0,5"/>
+                        <ComboBox ItemsSource="{Binding AvailableSuburbs}"
+                                  SelectedItem="{Binding Suburb}"
+                                  Height="36"
+                                  VerticalContentAlignment="Center"
+                                  FontSize="13"/>
+
+                        <!-- Status Message -->
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   Margin="0,10,0,0"
+                                   FontStyle="Italic"
+                                   Foreground="#666666"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Validation Message (if incomplete schedule) -->
+                <Border Visibility="{Binding HasNoSchedule, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Background="#FFF3CD"
+                        BorderBrush="#FFC107"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="15"
+                        Margin="0,0,0,15">
+                    <TextBlock Text="{Binding ValidationMessage}"
+                               Foreground="#856404"
+                               TextWrapping="Wrap"/>
+                </Border>
+
+                <!-- Main Schedule Content (Visible when schedule loaded) -->
+                <StackPanel Visibility="{Binding HasValidSchedule, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                    <!-- Reminder Banner -->
+                    <Border Visibility="{Binding ShowReminder, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Background="#D4EDDA"
+                            BorderBrush="#28A745"
+                            BorderThickness="2"
+                            CornerRadius="5"
+                            Padding="15"
+                            Margin="0,0,0,15">
+                        <StackPanel>
+                            <TextBlock Text="🔔 REMINDER" 
+                                       FontWeight="Bold" 
+                                       FontSize="16"
+                                       Foreground="#155724"
+                                       Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding ReminderMessage}"
+                                       Foreground="#155724"
+                                       TextWrapping="Wrap"
+                                       FontSize="14"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Next Collection Countdown -->
+                    <Border Style="{StaticResource PanelStyle}" Background="#E3F2FD">
+                        <StackPanel>
+                            <TextBlock Text="⏰ Next Collection" Style="{StaticResource HeaderStyle}"/>
+                            <TextBlock Text="{Binding DaysUntilNextCollectionText}"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="#1976D2"
+                                       Margin="0,0,0,10"/>
+                            <TextBlock FontSize="14" Foreground="#555555">
+                                <Run Text="Next bins:"/>
+                                <Run Text="{Binding NextCollectionBins}" FontWeight="Bold"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Bin Schedule Cards -->
+                    <Border Style="{StaticResource PanelStyle}">
+                        <StackPanel>
+                            <TextBlock Text="🗑️ Bin Collection Dates" Style="{StaticResource HeaderStyle}"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Red Bin Card -->
+                                <Border Grid.Column="0" Style="{StaticResource BinCardStyle}" BorderBrush="#E74C3C">
+                                    <StackPanel>
+                                        <TextBlock Text="RED BIN" 
+                                                   FontWeight="Bold" 
+                                                   FontSize="16"
+                                                   Foreground="#E74C3C"
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="General Waste" 
+                                                   FontSize="12"
+                                                   Foreground="#666666"
+                                                   Margin="0,0,0,10"/>
+                                        <TextBlock Text="Next Collection:" 
+                                                   FontSize="11"
+                                                   Foreground="#666666"/>
+                                        <TextBlock Text="{Binding NextRedBinDate}" 
+                                                   FontSize="15"
+                                                   FontWeight="Bold"
+                                                   Foreground="#E74C3C"/>
+                                        <TextBlock Text="(Weekly)" 
+                                                   FontSize="10"
+                                                   FontStyle="Italic"
+                                                   Foreground="#999999"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Yellow Bin Card -->
+                                <Border Grid.Column="1" Style="{StaticResource BinCardStyle}" BorderBrush="#F39C12">
+                                    <StackPanel>
+                                        <TextBlock Text="YELLOW BIN" 
+                                                   FontWeight="Bold" 
+                                                   FontSize="16"
+                                                   Foreground="#F39C12"
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="Recycling" 
+                                                   FontSize="12"
+                                                   Foreground="#666666"
+                                                   Margin="0,0,0,10"/>
+                                        <TextBlock Text="Next Collection:" 
+                                                   FontSize="11"
+                                                   Foreground="#666666"/>
+                                        <TextBlock Text="{Binding NextYellowBinDate}" 
+                                                   FontSize="15"
+                                                   FontWeight="Bold"
+                                                   Foreground="#F39C12"/>
+                                        <TextBlock Text="(Weekly)" 
+                                                   FontSize="10"
+                                                   FontStyle="Italic"
+                                                   Foreground="#999999"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Green Bin Card -->
+                                <Border Grid.Column="2" Style="{StaticResource BinCardStyle}" BorderBrush="#27AE60">
+                                    <StackPanel>
+                                        <TextBlock Text="GREEN BIN" 
+                                                   FontWeight="Bold" 
+                                                   FontSize="16"
+                                                   Foreground="#27AE60"
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="Garden Organics" 
+                                                   FontSize="12"
+                                                   Foreground="#666666"
+                                                   Margin="0,0,0,10"/>
+                                        <TextBlock Text="Next Collection:" 
+                                                   FontSize="11"
+                                                   Foreground="#666666"/>
+                                        <TextBlock Text="{Binding NextGreenBinDate}" 
+                                                   FontSize="15"
+                                                   FontWeight="Bold"
+                                                   Foreground="#27AE60"/>
+                                        <TextBlock Text="(Fortnightly)" 
+                                                   FontSize="10"
+                                                   FontStyle="Italic"
+                                                   Foreground="#999999"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Upcoming Collections List -->
+                    <Border Style="{StaticResource PanelStyle}">
+                        <StackPanel>
+                            <TextBlock Text="📅 Upcoming Collections (Next 8 Weeks)" Style="{StaticResource HeaderStyle}"/>
+
+                            <ListBox ItemsSource="{Binding UpcomingCollections}"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     MaxHeight="300"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#EEEEEE" 
+                                                BorderThickness="0,0,0,1" 
+                                                Padding="10,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" 
+                                                           Text="{Binding Date, StringFormat='ddd, MMM d'}"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"/>
+
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding BinDescription}" 
+                                                               FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{Binding BinType, StringFormat='🗑️ {0} Bin'}" 
+                                                               FontSize="11"
+                                                               Foreground="#666666"/>
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Column="2" 
+                                                           Text="{Binding Frequency}"
+                                                           FontSize="11"
+                                                           FontStyle="Italic"
+                                                           Foreground="#999999"
+                                                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Bulky Waste Information -->
+                    <Border Style="{StaticResource PanelStyle}">
+                        <StackPanel>
+                            <TextBlock Text="🛋️ Bulky Waste Collection" Style="{StaticResource HeaderStyle}"/>
+
+                            <ItemsControl ItemsSource="{Binding BulkyWasteSchedules}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#F8F9FA" 
+                                                BorderBrush="#DDDDDD" 
+                                                BorderThickness="1"
+                                                CornerRadius="5"
+                                                Padding="15"
+                                                Margin="0,0,0,10">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Council}" 
+                                                           FontWeight="Bold"
+                                                           FontSize="14"
+                                                           Margin="0,0,0,5"/>
+                                                <TextBlock FontSize="12" Foreground="#666666">
+                                                    <Run Text="Type:"/>
+                                                    <Run Text="{Binding GetFrequencyDescription}" FontWeight="SemiBold"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="12" Foreground="#666666">
+                                                    <Run Text="Max Items:"/>
+                                                    <Run Text="{Binding MaxItemsPerCollection}" FontWeight="SemiBold"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="12" Foreground="#666666">
+                                                    <Run Text="Phone:"/>
+                                                    <Run Text="{Binding BookingPhoneNumber}" FontWeight="SemiBold"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="12" Foreground="#666666">
+                                                    <Run Text="Website:"/>
+                                                    <Run Text="{Binding BookingWebsite}" FontWeight="SemiBold"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,2 @@
+C:\Users\kgobi\Documents\WasteLess\WasteLess.Tests\obj\Debug\WasteLess.Tests.csproj.AssemblyReference.cache
+C:\Users\kgobi\Documents\WasteLess\WasteLess.Tests\obj\Debug\WasteLess.Tests.csproj.CoreCompileInputs.cache
